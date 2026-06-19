@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.sivebo.ms_embalaje.dto.request.ArticuloEmbalajeRequest;
 import com.sivebo.ms_embalaje.dto.response.ArticuloEmbalajeResponse;
+import com.sivebo.ms_embalaje.exception.RecursoNoEncontradoException;
 import com.sivebo.ms_embalaje.model.entity.ArticuloEmbalaje;
 import com.sivebo.ms_embalaje.model.entity.CategoriaEmbalaje;
 import com.sivebo.ms_embalaje.repository.ArticuloEmbalajeRepository;
@@ -29,12 +30,13 @@ public class ArticuloEmbalajeServiceImpl implements ArticuloEmbalajeService {
     public ArticuloEmbalajeResponse crear(ArticuloEmbalajeRequest request) {
         log.info("Creando artículo: {}", request.getNombre());
         CategoriaEmbalaje categoria = categoriaRepository.findById(request.getIdCat())
-                .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Categoría no encontrada"));
         ArticuloEmbalaje articulo = new ArticuloEmbalaje();
         articulo.setCategoria(categoria);
         articulo.setNombre(request.getNombre());
         articulo.setDescripcion(request.getDescripcion());
         articulo.setPrecioVta(request.getPrecioVta());
+        articulo.setActivo(true);
         return toResponse(repository.save(articulo));
     }
 
@@ -42,7 +44,7 @@ public class ArticuloEmbalajeServiceImpl implements ArticuloEmbalajeService {
     public ArticuloEmbalajeResponse obtenerPorId(Long id) {
         log.info("Buscando artículo id: {}", id);
         return toResponse(repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Artículo no encontrado con id: " + id)));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Artículo no encontrado con id: " + id)));
     }
 
     @Override
@@ -61,9 +63,9 @@ public class ArticuloEmbalajeServiceImpl implements ArticuloEmbalajeService {
     public ArticuloEmbalajeResponse actualizar(Long id, ArticuloEmbalajeRequest request) {
         log.info("Actualizando artículo id: {}", id);
         ArticuloEmbalaje articulo = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Artículo no encontrado con id: " + id));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Artículo no encontrado con id: " + id));
         CategoriaEmbalaje categoria = categoriaRepository.findById(request.getIdCat())
-                .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Categoría no encontrada"));
         articulo.setCategoria(categoria);
         articulo.setNombre(request.getNombre());
         articulo.setDescripcion(request.getDescripcion());
@@ -72,9 +74,12 @@ public class ArticuloEmbalajeServiceImpl implements ArticuloEmbalajeService {
     }
 
     @Override
-    public void eliminar(Long id) {
-        log.info("Eliminando artículo id: {}", id);
-        repository.deleteById(id);
+    public ArticuloEmbalajeResponse desactivar(Long id) {
+        log.info("Desactivando artículo id: {}", id);
+        ArticuloEmbalaje articulo = repository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Artículo no encontrado con id: " + id));
+        articulo.setActivo(false);
+        return toResponse(repository.save(articulo));
     }
 
     private ArticuloEmbalajeResponse toResponse(ArticuloEmbalaje a) {
@@ -85,6 +90,7 @@ public class ArticuloEmbalajeServiceImpl implements ArticuloEmbalajeService {
         r.setNombre(a.getNombre());
         r.setDescripcion(a.getDescripcion());
         r.setPrecioVta(a.getPrecioVta());
+        r.setActivo(a.getActivo());
         return r;
     }
 }

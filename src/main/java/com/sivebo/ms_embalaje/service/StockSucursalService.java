@@ -10,5 +10,6 @@ public interface StockSucursalService {
     StockSucursalResponse obtenerPorId(Long id);
     List<StockSucursalResponse> listarPorSucursal(Long idSucursal);
     StockSucursalResponse actualizarCantidad(Long idArt, Long idSucursal, Integer cantidad);
+    StockSucursalResponse descontarStock(Long idArt, Long idSucursal, Integer cantidadVendida);
     Boolean verificarStock(Long idArt, Long idSucursal, Integer cantidadRequerida);
 }

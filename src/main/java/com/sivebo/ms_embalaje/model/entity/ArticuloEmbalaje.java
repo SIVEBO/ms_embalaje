@@ -40,4 +40,7 @@ public class ArticuloEmbalaje {
 
     @Column(name = "precio_vta", nullable = false)
     private BigDecimal precioVta;
+
+    @Column(name = "activo", nullable = false)
+    private Boolean activo = true;
 }

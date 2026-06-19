@@ -11,5 +11,5 @@ public interface ArticuloEmbalajeService {
     List<ArticuloEmbalajeResponse> listarTodos();
     List<ArticuloEmbalajeResponse> listarPorCategoria(Long idCat);
     ArticuloEmbalajeResponse actualizar(Long id, ArticuloEmbalajeRequest request);
-    void eliminar(Long id);
+    ArticuloEmbalajeResponse desactivar(Long id);
 }

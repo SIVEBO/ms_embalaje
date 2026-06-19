@@ -11,4 +11,5 @@ public class ArticuloEmbalajeResponse {
     private String nombre;
     private String descripcion;
     private BigDecimal precioVta;
+    private Boolean activo;
 }

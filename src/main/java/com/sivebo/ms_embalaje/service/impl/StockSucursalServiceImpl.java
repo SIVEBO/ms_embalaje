@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import com.sivebo.ms_embalaje.dto.request.StockSucursalRequest;
 import com.sivebo.ms_embalaje.dto.response.StockSucursalResponse;
+import com.sivebo.ms_embalaje.exception.RecursoNoEncontradoException;
+import com.sivebo.ms_embalaje.exception.ReglaNegocioException;
 import com.sivebo.ms_embalaje.model.entity.ArticuloEmbalaje;
 import com.sivebo.ms_embalaje.model.entity.StockSucursal;
 import com.sivebo.ms_embalaje.repository.ArticuloEmbalajeRepository;
@@ -29,7 +31,7 @@ public class StockSucursalServiceImpl implements StockSucursalService {
     public StockSucursalResponse crear(StockSucursalRequest request) {
         log.info("Creando stock para artículo id: {} en sucursal id: {}", request.getIdArt(), request.getIdSucursal());
         ArticuloEmbalaje articulo = articuloRepository.findById(request.getIdArt())
-                .orElseThrow(() -> new RuntimeException("Artículo no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Artículo no encontrado"));
         StockSucursal stock = new StockSucursal();
         stock.setArticulo(articulo);
         stock.setIdSucursal(request.getIdSucursal());
@@ -41,7 +43,7 @@ public class StockSucursalServiceImpl implements StockSucursalService {
     public StockSucursalResponse obtenerPorId(Long id) {
         log.info("Buscando stock id: {}", id);
         return toResponse(repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Stock no encontrado con id: " + id)));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Stock no encontrado con id: " + id)));
     }
 
     @Override
@@ -54,8 +56,23 @@ public class StockSucursalServiceImpl implements StockSucursalService {
     public StockSucursalResponse actualizarCantidad(Long idArt, Long idSucursal, Integer cantidad) {
         log.info("Actualizando stock artículo id: {} sucursal id: {}", idArt, idSucursal);
         StockSucursal stock = repository.findByArticulo_IdArtAndIdSucursal(idArt, idSucursal)
-                .orElseThrow(() -> new RuntimeException("Stock no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Stock no encontrado"));
         stock.setCantidadDisponible(cantidad);
+        return toResponse(repository.save(stock));
+    }
+
+    @Override
+    public StockSucursalResponse descontarStock(Long idArt, Long idSucursal, Integer cantidadVendida) {
+        log.info("Descontando {} unidades del artículo id: {} en sucursal id: {}", cantidadVendida, idArt, idSucursal);
+        StockSucursal stock = repository.findByArticulo_IdArtAndIdSucursal(idArt, idSucursal)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Stock no encontrado para este artículo y sucursal"));
+
+        if (stock.getCantidadDisponible() < cantidadVendida) {
+            throw new ReglaNegocioException("Stock insuficiente. Disponible: " + stock.getCantidadDisponible()
+                    + ", solicitado: " + cantidadVendida);
+        }
+
+        stock.setCantidadDisponible(stock.getCantidadDisponible() - cantidadVendida);
         return toResponse(repository.save(stock));
     }
 

@@ -50,6 +50,14 @@ public class StockSucursalController {
         return ResponseEntity.ok(service.actualizarCantidad(idArt, idSucursal, cantidad));
     }
 
+    @PatchMapping("/descontar")
+    public ResponseEntity<StockSucursalResponse> descontarStock(
+            @RequestParam Long idArt,
+            @RequestParam Long idSucursal,
+            @RequestParam Integer cantidad) {
+        return ResponseEntity.ok(service.descontarStock(idArt, idSucursal, cantidad));
+    }
+
     @GetMapping("/verificar")
     public ResponseEntity<Boolean> verificarStock(
             @RequestParam Long idArt,

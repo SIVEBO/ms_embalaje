@@ -19,7 +19,7 @@ public class EmbalajeClient {
         log.info("Verificando caja abierta para sucursal id: {}", idSucursal);
         try {
             return webClient.get()
-                    .uri("/api/cajas/sucursal/{idSucursal}", idSucursal)
+                    .uri("/api/v1/cajas/sucursal/{idSucursal}", idSucursal)
                     .retrieve()
                     .bodyToMono(String.class)
                     .map(r -> r.contains("ABIERTA"))

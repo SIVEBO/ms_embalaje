@@ -21,7 +21,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/categorias")
+@RequestMapping("api/v1/categorias")
 @RequiredArgsConstructor
 public class CategoriaEmbalajeController {
 

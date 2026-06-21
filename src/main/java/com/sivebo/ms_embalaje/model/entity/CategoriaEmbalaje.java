@@ -24,6 +24,6 @@ public class CategoriaEmbalaje {
     @Column(name = "id_cat")
     private Long idCat;
 
-    @Column(name = "nombre_categoria", nullable = false, length = 100)
+    @Column(name = "nombre_categoria", nullable = false, length = 100, unique = true)
     private String nombreCategoria;
 }

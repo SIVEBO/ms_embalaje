@@ -12,7 +12,7 @@ public class EmbalajeClient {
     private final WebClient webClient;
 
     public EmbalajeClient(WebClient.Builder builder) {
-        this.webClient = builder.baseUrl("http://localhost:8090").build();
+        this.webClient = builder.baseUrl("http://ms-finanzas").build();
     }
 
     public Boolean verificarCajaAbierta(Long idSucursal) {

@@ -17,9 +17,14 @@ import com.sivebo.ms_embalaje.dto.request.StockSucursalRequest;
 import com.sivebo.ms_embalaje.dto.response.StockSucursalResponse;
 import com.sivebo.ms_embalaje.service.StockSucursalService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+@Tag(name = "Stock por Sucursal", description = "RF-27/28/29: control de stock de embalaje por sucursal")
 @RestController
 @RequestMapping("api/v1/stock")
 @RequiredArgsConstructor
@@ -27,21 +32,38 @@ public class StockSucursalController {
 
     private final StockSucursalService service;
 
+    @Operation(summary = "Crear registro de stock", description = "Inicializa el stock de un artículo en una sucursal")
+    @ApiResponses({
+        @ApiResponse(responseCode = "201", description = "Stock creado"),
+        @ApiResponse(responseCode = "404", description = "Artículo no encontrado")
+    })
     @PostMapping
     public ResponseEntity<StockSucursalResponse> crear(@Valid @RequestBody StockSucursalRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.crear(request));
     }
 
+    @Operation(summary = "Obtener stock por ID")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Stock encontrado"),
+        @ApiResponse(responseCode = "404", description = "Registro de stock no encontrado")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<StockSucursalResponse> obtenerPorId(@PathVariable Long id) {
         return ResponseEntity.ok(service.obtenerPorId(id));
     }
 
+    @Operation(summary = "Listar stock de una sucursal", description = "RF-27: muestra disponibilidad de embalaje por sucursal")
+    @ApiResponse(responseCode = "200", description = "Lista de stock por sucursal")
     @GetMapping("/sucursal/{idSucursal}")
     public ResponseEntity<List<StockSucursalResponse>> listarPorSucursal(@PathVariable Long idSucursal) {
         return ResponseEntity.ok(service.listarPorSucursal(idSucursal));
     }
 
+    @Operation(summary = "Actualizar cantidad en stock")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Stock actualizado"),
+        @ApiResponse(responseCode = "404", description = "Registro no encontrado")
+    })
     @PatchMapping("/actualizar")
     public ResponseEntity<StockSucursalResponse> actualizarCantidad(
             @RequestParam Long idArt,
@@ -50,6 +72,11 @@ public class StockSucursalController {
         return ResponseEntity.ok(service.actualizarCantidad(idArt, idSucursal, cantidad));
     }
 
+    @Operation(summary = "Descontar stock por venta", description = "RF-28: descuenta unidades vendidas del stock de sucursal")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Stock descontado"),
+        @ApiResponse(responseCode = "400", description = "RF-29: stock insuficiente")
+    })
     @PatchMapping("/descontar")
     public ResponseEntity<StockSucursalResponse> descontarStock(
             @RequestParam Long idArt,
@@ -58,6 +85,8 @@ public class StockSucursalController {
         return ResponseEntity.ok(service.descontarStock(idArt, idSucursal, cantidad));
     }
 
+    @Operation(summary = "Verificar disponibilidad de stock", description = "RF-29: verifica si hay stock suficiente antes de vender")
+    @ApiResponse(responseCode = "200", description = "Booleano indicando si hay stock suficiente")
     @GetMapping("/verificar")
     public ResponseEntity<Boolean> verificarStock(
             @RequestParam Long idArt,

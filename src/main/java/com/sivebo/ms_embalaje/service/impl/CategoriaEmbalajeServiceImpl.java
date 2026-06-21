@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.sivebo.ms_embalaje.dto.request.CategoriaEmbalajeRequest;
 import com.sivebo.ms_embalaje.dto.response.CategoriaEmbalajeResponse;
+import com.sivebo.ms_embalaje.exception.RecursoNoEncontradoException;
 import com.sivebo.ms_embalaje.model.entity.CategoriaEmbalaje;
 import com.sivebo.ms_embalaje.repository.CategoriaEmbalajeRepository;
 import com.sivebo.ms_embalaje.service.CategoriaEmbalajeService;
@@ -34,7 +35,7 @@ public class CategoriaEmbalajeServiceImpl implements CategoriaEmbalajeService {
     public CategoriaEmbalajeResponse obtenerPorId(Long id) {
         log.info("Buscando categoría id: {}", id);
         return toResponse(repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Categoría no encontrada con id: " + id)));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Categoría no encontrada con id: " + id)));
     }
 
     @Override
@@ -47,7 +48,7 @@ public class CategoriaEmbalajeServiceImpl implements CategoriaEmbalajeService {
     public CategoriaEmbalajeResponse actualizar(Long id, CategoriaEmbalajeRequest request) {
         log.info("Actualizando categoría id: {}", id);
         CategoriaEmbalaje categoria = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Categoría no encontrada con id: " + id));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Categoría no encontrada con id: " + id));
         categoria.setNombreCategoria(request.getNombreCategoria());
         return toResponse(repository.save(categoria));
     }

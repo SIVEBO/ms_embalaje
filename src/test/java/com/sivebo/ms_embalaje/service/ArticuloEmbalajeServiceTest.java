@@ -1,8 +1,14 @@
 package com.sivebo.ms_embalaje.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -22,7 +28,6 @@ import com.sivebo.ms_embalaje.model.entity.ArticuloEmbalaje;
 import com.sivebo.ms_embalaje.model.entity.CategoriaEmbalaje;
 import com.sivebo.ms_embalaje.repository.ArticuloEmbalajeRepository;
 import com.sivebo.ms_embalaje.repository.CategoriaEmbalajeRepository;
-import com.sivebo.ms_embalaje.service.impl.ArticuloEmbalajeServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class ArticuloEmbalajeServiceTest {
@@ -34,7 +39,7 @@ class ArticuloEmbalajeServiceTest {
     private CategoriaEmbalajeRepository categoriaRepository;
 
     @InjectMocks
-    private ArticuloEmbalajeServiceImpl service;
+    private ArticuloEmbalajeService service;
 
     private CategoriaEmbalaje categoria;
     private ArticuloEmbalaje articulo;

@@ -32,7 +32,7 @@ public class CategoriaEmbalajeController {
 
     private final CategoriaEmbalajeService service;
 
-    @Operation(summary = "Crear categoría", description = "RF-26: registra una nueva categoría de embalaje")
+    @Operation(summary = "Crear categoría", description = "registra una nueva categoría de embalaje")
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "Categoría creada"),
         @ApiResponse(responseCode = "409", description = "Nombre de categoría duplicado")

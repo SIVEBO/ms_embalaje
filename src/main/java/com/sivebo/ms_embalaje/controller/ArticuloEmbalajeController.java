@@ -32,7 +32,7 @@ public class ArticuloEmbalajeController {
 
     private final ArticuloEmbalajeService service;
 
-    @Operation(summary = "Crear artículo de embalaje", description = "RF-25: registra un nuevo artículo con categoría y precio")
+    @Operation(summary = "Crear artículo de embalaje", description = "registra un nuevo artículo con categoría y precio")
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "Artículo creado exitosamente"),
         @ApiResponse(responseCode = "404", description = "Categoría no encontrada")

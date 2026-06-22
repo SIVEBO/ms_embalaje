@@ -24,7 +24,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "Stock por Sucursal", description = "RF-27/28/29: control de stock de embalaje por sucursal")
+@Tag(name = "Stock por Sucursal", description = "control de stock de embalaje por sucursal")
 @RestController
 @RequestMapping("api/v1/stock")
 @RequiredArgsConstructor
@@ -52,7 +52,7 @@ public class StockSucursalController {
         return ResponseEntity.ok(service.obtenerPorId(id));
     }
 
-    @Operation(summary = "Listar stock de una sucursal", description = "RF-27: muestra disponibilidad de embalaje por sucursal")
+    @Operation(summary = "Listar stock de una sucursal", description = "muestra disponibilidad de embalaje por sucursal")
     @ApiResponse(responseCode = "200", description = "Lista de stock por sucursal")
     @GetMapping("/sucursal/{idSucursal}")
     public ResponseEntity<List<StockSucursalResponse>> listarPorSucursal(@PathVariable Long idSucursal) {
@@ -72,10 +72,10 @@ public class StockSucursalController {
         return ResponseEntity.ok(service.actualizarCantidad(idArt, idSucursal, cantidad));
     }
 
-    @Operation(summary = "Descontar stock por venta", description = "RF-28: descuenta unidades vendidas del stock de sucursal")
+    @Operation(summary = "Descontar stock por venta", description = "descuenta unidades vendidas del stock de sucursal")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Stock descontado"),
-        @ApiResponse(responseCode = "400", description = "RF-29: stock insuficiente")
+        @ApiResponse(responseCode = "400", description = "stock insuficiente")
     })
     @PatchMapping("/descontar")
     public ResponseEntity<StockSucursalResponse> descontarStock(
@@ -85,7 +85,7 @@ public class StockSucursalController {
         return ResponseEntity.ok(service.descontarStock(idArt, idSucursal, cantidad));
     }
 
-    @Operation(summary = "Verificar disponibilidad de stock", description = "RF-29: verifica si hay stock suficiente antes de vender")
+    @Operation(summary = "Verificar disponibilidad de stock", description = "verifica si hay stock suficiente antes de vender")
     @ApiResponse(responseCode = "200", description = "Booleano indicando si hay stock suficiente")
     @GetMapping("/verificar")
     public ResponseEntity<Boolean> verificarStock(

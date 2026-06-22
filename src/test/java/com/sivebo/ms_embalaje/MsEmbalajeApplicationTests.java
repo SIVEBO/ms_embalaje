@@ -1,8 +1,12 @@
 package com.sivebo.ms_embalaje;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -26,8 +30,8 @@ import com.sivebo.ms_embalaje.model.entity.StockSucursal;
 import com.sivebo.ms_embalaje.repository.ArticuloEmbalajeRepository;
 import com.sivebo.ms_embalaje.repository.CategoriaEmbalajeRepository;
 import com.sivebo.ms_embalaje.repository.StockSucursalRepository;
-import com.sivebo.ms_embalaje.service.impl.ArticuloEmbalajeServiceImpl;
-import com.sivebo.ms_embalaje.service.impl.StockSucursalServiceImpl;
+import com.sivebo.ms_embalaje.service.ArticuloEmbalajeService;
+import com.sivebo.ms_embalaje.service.StockSucursalService;
 
 @ExtendWith(MockitoExtension.class)
 class MsEmbalajeApplicationTests {
@@ -40,7 +44,7 @@ class MsEmbalajeApplicationTests {
         @Mock
         private CategoriaEmbalajeRepository categoriaRepository;
         @InjectMocks
-        private ArticuloEmbalajeServiceImpl service;
+        private ArticuloEmbalajeService service;
 
         private CategoriaEmbalaje categoria;
         private ArticuloEmbalaje articulo;
@@ -131,7 +135,7 @@ class MsEmbalajeApplicationTests {
         @Mock
         private ArticuloEmbalajeRepository articuloRepository;
         @InjectMocks
-        private StockSucursalServiceImpl service;
+        private StockSucursalService service;
 
         private StockSucursal stock;
         private ArticuloEmbalaje articulo;

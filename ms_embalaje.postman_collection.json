@@ -1,0 +1,190 @@
+{
+  "info": {
+    "name": "ms_embalaje",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "SIVEBO ms_embalaje: todos los endpoints a través de la API gateway ({{baseUrl}}). Cadena de identificadores FK desde registros creados ({{idCategoria}}, {{idArticulo}}). Las operaciones destructivas se ejecutan al final: Borrar categoria apunta a una categoría VACÍA desechable (eliminar una categoría que tiene artículos devuelve 500 por FK), y Desactivar apunta al artículo principal (la desactivación mantiene el precio/stock intacto, por lo que ms_ventas posterior sigue funcionando)."
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "idCategoria", "value": "1" },
+    { "key": "idArticulo", "value": "1" },
+    { "key": "idStock", "value": "1" },
+    { "key": "idSucursal", "value": "1" },
+    { "key": "idCategoriaTmp", "value": "99" }
+  ],
+  "item": [
+    {
+      "name": "CategoriaEmbalajeController",
+      "item": [
+        {
+          "name": "Crear categoria",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": { "mode": "raw", "raw": "{\n  \"nombreCategoria\": \"Cajas\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": { "raw": "{{baseUrl}}/api/v1/categorias", "host": ["{{baseUrl}}"], "path": ["api","v1","categorias"] }
+          },
+          "event": [
+            { "listen": "test", "script": { "type": "text/javascript", "exec": [
+              "var j; try { j = pm.response.json(); } catch (e) { j = null; }",
+              "if (j && j.idCat !== undefined && j.idCat !== null) pm.collectionVariables.set(\"idCategoria\", j.idCat);",
+              "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200,201]); });"
+            ] } }
+          ]
+        },
+        {
+          "name": "Listar categorias",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/v1/categorias", "host": ["{{baseUrl}}"], "path": ["api","v1","categorias"] } },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });" ] } } ]
+        },
+        {
+          "name": "Obtener categoria por id",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/v1/categorias/{{idCategoria}}", "host": ["{{baseUrl}}"], "path": ["api","v1","categorias","{{idCategoria}}"] } },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });" ] } } ]
+        },
+        {
+          "name": "Actualizar categoria",
+          "request": {
+            "method": "PUT",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": { "mode": "raw", "raw": "{\n  \"nombreCategoria\": \"Cajas y embalajes\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": { "raw": "{{baseUrl}}/api/v1/categorias/{{idCategoria}}", "host": ["{{baseUrl}}"], "path": ["api","v1","categorias","{{idCategoria}}"] }
+          },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });" ] } } ]
+        }
+      ]
+    },
+    {
+      "name": "ArticuloEmbalajeController",
+      "item": [
+        {
+          "name": "Crear articulo",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": { "mode": "raw", "raw": "{\n  \"idCat\": {{idCategoria}},\n  \"nombre\": \"Caja mediana\",\n  \"descripcion\": \"Caja de carton 40x30x30\",\n  \"precioVta\": 3000\n}", "options": { "raw": { "language": "json" } } },
+            "url": { "raw": "{{baseUrl}}/api/v1/articulos", "host": ["{{baseUrl}}"], "path": ["api","v1","articulos"] }
+          },
+          "event": [
+            { "listen": "test", "script": { "type": "text/javascript", "exec": [
+              "var j; try { j = pm.response.json(); } catch (e) { j = null; }",
+              "if (j && j.idArt !== undefined && j.idArt !== null) pm.collectionVariables.set(\"idArticulo\", j.idArt);",
+              "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200,201]); });"
+            ] } }
+          ]
+        },
+        {
+          "name": "Listar articulos",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/v1/articulos", "host": ["{{baseUrl}}"], "path": ["api","v1","articulos"] } },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });" ] } } ]
+        },
+        {
+          "name": "Obtener articulo por id",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/v1/articulos/{{idArticulo}}", "host": ["{{baseUrl}}"], "path": ["api","v1","articulos","{{idArticulo}}"] } },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });" ] } } ]
+        },
+        {
+          "name": "Listar articulos por categoria",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/v1/articulos/categoria/{{idCategoria}}", "host": ["{{baseUrl}}"], "path": ["api","v1","articulos","categoria","{{idCategoria}}"] } },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });" ] } } ]
+        },
+        {
+          "name": "Actualizar articulo",
+          "request": {
+            "method": "PUT",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": { "mode": "raw", "raw": "{\n  \"idCat\": {{idCategoria}},\n  \"nombre\": \"Caja mediana\",\n  \"descripcion\": \"Caja reforzada\",\n  \"precioVta\": 3500\n}", "options": { "raw": { "language": "json" } } },
+            "url": { "raw": "{{baseUrl}}/api/v1/articulos/{{idArticulo}}", "host": ["{{baseUrl}}"], "path": ["api","v1","articulos","{{idArticulo}}"] }
+          },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });" ] } } ]
+        }
+      ]
+    },
+    {
+      "name": "StockSucursalController",
+      "item": [
+        {
+          "name": "Crear stock",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": { "mode": "raw", "raw": "{\n  \"idArt\": {{idArticulo}},\n  \"idSucursal\": {{idSucursal}},\n  \"cantidadDisponible\": 100\n}", "options": { "raw": { "language": "json" } } },
+            "url": { "raw": "{{baseUrl}}/api/v1/stock", "host": ["{{baseUrl}}"], "path": ["api","v1","stock"] }
+          },
+          "event": [
+            { "listen": "test", "script": { "type": "text/javascript", "exec": [
+              "var j; try { j = pm.response.json(); } catch (e) { j = null; }",
+              "if (j && j.idStock !== undefined && j.idStock !== null) pm.collectionVariables.set(\"idStock\", j.idStock);",
+              "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200,201]); });"
+            ] } }
+          ]
+        },
+        {
+          "name": "Obtener stock por id",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/v1/stock/{{idStock}}", "host": ["{{baseUrl}}"], "path": ["api","v1","stock","{{idStock}}"] } },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });" ] } } ]
+        },
+        {
+          "name": "Listar stock por sucursal",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/v1/stock/sucursal/{{idSucursal}}", "host": ["{{baseUrl}}"], "path": ["api","v1","stock","sucursal","{{idSucursal}}"] } },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });" ] } } ]
+        },
+        {
+          "name": "Actualizar stock",
+          "request": {
+            "method": "PATCH", "header": [],
+            "url": { "raw": "{{baseUrl}}/api/v1/stock/actualizar?idArt={{idArticulo}}&idSucursal={{idSucursal}}&cantidad=50", "host": ["{{baseUrl}}"], "path": ["api","v1","stock","actualizar"], "query": [ { "key": "idArt", "value": "{{idArticulo}}" }, { "key": "idSucursal", "value": "{{idSucursal}}" }, { "key": "cantidad", "value": "50" } ] }
+          },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });" ] } } ]
+        },
+        {
+          "name": "Descontar stock",
+          "request": {
+            "method": "PATCH", "header": [],
+            "url": { "raw": "{{baseUrl}}/api/v1/stock/descontar?idArt={{idArticulo}}&idSucursal={{idSucursal}}&cantidad=1", "host": ["{{baseUrl}}"], "path": ["api","v1","stock","descontar"], "query": [ { "key": "idArt", "value": "{{idArticulo}}" }, { "key": "idSucursal", "value": "{{idSucursal}}" }, { "key": "cantidad", "value": "1" } ] }
+          },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });" ] } } ]
+        },
+        {
+          "name": "Verificar stock",
+          "request": {
+            "method": "GET", "header": [],
+            "url": { "raw": "{{baseUrl}}/api/v1/stock/verificar?idArt={{idArticulo}}&idSucursal={{idSucursal}}&cantidadRequerida=1", "host": ["{{baseUrl}}"], "path": ["api","v1","stock","verificar"], "query": [ { "key": "idArt", "value": "{{idArticulo}}" }, { "key": "idSucursal", "value": "{{idSucursal}}" }, { "key": "cantidadRequerida", "value": "1" } ] }
+          },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });" ] } } ]
+        }
+      ]
+    },
+    {
+      "name": "Limpiar (destructivo - correr ultimo)",
+      "item": [
+        {
+          "name": "Desactivar articulo",
+          "request": { "method": "PATCH", "header": [], "url": { "raw": "{{baseUrl}}/api/v1/articulos/{{idArticulo}}/desactivar", "host": ["{{baseUrl}}"], "path": ["api","v1","articulos","{{idArticulo}}","desactivar"] } },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });" ] } } ]
+        },
+        {
+          "name": "Crear categoria (throwaway for delete)",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "body": { "mode": "raw", "raw": "{\n  \"nombreCategoria\": \"Temporal\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": { "raw": "{{baseUrl}}/api/v1/categorias", "host": ["{{baseUrl}}"], "path": ["api","v1","categorias"] }
+          },
+          "event": [
+            { "listen": "test", "script": { "type": "text/javascript", "exec": [
+              "var j; try { j = pm.response.json(); } catch (e) { j = null; }",
+              "if (j && j.idCat !== undefined && j.idCat !== null) pm.collectionVariables.set(\"idCategoriaTmp\", j.idCat);",
+              "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200,201]); });"
+            ] } }
+          ]
+        },
+        {
+          "name": "Borrar categoria (desechar, vacio)",
+          "request": { "method": "DELETE", "header": [], "url": { "raw": "{{baseUrl}}/api/v1/categorias/{{idCategoriaTmp}}", "host": ["{{baseUrl}}"], "path": ["api","v1","categorias","{{idCategoriaTmp}}"] } },
+          "event": [ { "listen": "test", "script": { "type": "text/javascript", "exec": [ "pm.test(\"status ok\", function () { pm.expect(pm.response.code).to.be.oneOf([200,204]); });" ] } } ]
+        }
+      ]
+    }
+  ]
+}

@@ -91,6 +91,7 @@ public class StockSucursalServiceImpl implements StockSucursalService {
         r.setNombreArticulo(s.getArticulo().getNombre());
         r.setIdSucursal(s.getIdSucursal());
         r.setCantidadDisponible(s.getCantidadDisponible());
+        r.setUpdatedAt(s.getUpdatedAt());
         return r;
     }
 }

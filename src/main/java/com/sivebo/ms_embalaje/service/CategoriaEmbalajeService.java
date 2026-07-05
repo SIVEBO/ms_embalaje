@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.sivebo.ms_embalaje.dto.request.CategoriaEmbalajeRequest;
 import com.sivebo.ms_embalaje.dto.response.CategoriaEmbalajeResponse;
 import com.sivebo.ms_embalaje.exception.RecursoNoEncontradoException;
+import com.sivebo.ms_embalaje.exception.ReglaNegocioException;
 import com.sivebo.ms_embalaje.model.entity.CategoriaEmbalaje;
 import com.sivebo.ms_embalaje.repository.CategoriaEmbalajeRepository;
 
@@ -24,6 +25,10 @@ public class CategoriaEmbalajeService{
     
     public CategoriaEmbalajeResponse crear(CategoriaEmbalajeRequest request) {
         log.info("Creando categoría: {}", request.getNombreCategoria());
+        if (repository.existsByNombreCategoria(request.getNombreCategoria())) {
+            throw new ReglaNegocioException(
+                    "Ya existe una categoría con el nombre: " + request.getNombreCategoria());
+        }
         CategoriaEmbalaje categoria = new CategoriaEmbalaje();
         categoria.setNombreCategoria(request.getNombreCategoria());
         return toResponse(repository.save(categoria));
@@ -54,6 +59,9 @@ public class CategoriaEmbalajeService{
     
     public void eliminar(Long id) {
         log.info("Eliminando categoría id: {}", id);
+        if (!repository.existsById(id)) {
+            throw new RecursoNoEncontradoException("Categoría no encontrada con id: " + id);
+        }
         repository.deleteById(id);
     }
 

@@ -8,6 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.sivebo.ms_embalaje.model.entity.StockSucursal;
 
 public interface StockSucursalRepository extends JpaRepository<StockSucursal, Long> {
-    List<StockSucursal> findByIdSucursal(Long idSucursal);
-    Optional<StockSucursal> findByArticulo_IdArtAndIdSucursal(Long idArt, Long idSucursal);
+    List<StockSucursal> findByNombreSucursal(String nombreSucursal);
+    Optional<StockSucursal> findByNombreArtAndNombreSucursal(String nombreArt, String nombreSucursal);
 }

@@ -15,8 +15,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ArticuloEmbalajeRequest {
 
-    @NotNull(message = "La categoría es obligatoria")
-    private Long idCat;
+    @NotBlank(message = "La categoría es obligatoria")
+    private String nombreCategoria;
 
     @NotBlank(message = "El nombre es obligatorio")
     @Size(max = 100, message = "El nombre no puede superar los 100 caracteres")

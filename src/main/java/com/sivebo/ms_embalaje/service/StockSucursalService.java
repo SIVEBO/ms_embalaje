@@ -25,44 +25,44 @@ public class StockSucursalService{
     private final StockSucursalRepository repository;
     private final ArticuloEmbalajeRepository articuloRepository;
 
-    
+
     public StockSucursalResponse crear(StockSucursalRequest request) {
-        log.info("Creando stock para artículo id: {} en sucursal id: {}", request.getIdArt(), request.getIdSucursal());
-        ArticuloEmbalaje articulo = articuloRepository.findById(request.getIdArt())
+        log.info("Creando stock para artículo: {} en sucursal: {}", request.getNombreArt(), request.getNombreSucursal());
+        ArticuloEmbalaje articulo = articuloRepository.findByNombre(request.getNombreArt())
                 .orElseThrow(() -> new RecursoNoEncontradoException("Artículo no encontrado"));
         StockSucursal stock = new StockSucursal();
-        stock.setArticulo(articulo);
-        stock.setIdSucursal(request.getIdSucursal());
+        stock.setNombreArt(articulo.getNombre());
+        stock.setNombreSucursal(request.getNombreSucursal());
         stock.setCantidadDisponible(request.getCantidadDisponible());
         return toResponse(repository.save(stock));
     }
 
-    
+
     public StockSucursalResponse obtenerPorId(Long id) {
         log.info("Buscando stock id: {}", id);
         return toResponse(repository.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Stock no encontrado con id: " + id)));
     }
 
-    
-    public List<StockSucursalResponse> listarPorSucursal(Long idSucursal) {
-        log.info("Listando stock de sucursal id: {}", idSucursal);
-        return repository.findByIdSucursal(idSucursal).stream().map(this::toResponse).collect(Collectors.toList());
+
+    public List<StockSucursalResponse> listarPorSucursal(String nombreSucursal) {
+        log.info("Listando stock de sucursal: {}", nombreSucursal);
+        return repository.findByNombreSucursal(nombreSucursal).stream().map(this::toResponse).collect(Collectors.toList());
     }
 
-    
-    public StockSucursalResponse actualizarCantidad(Long idArt, Long idSucursal, Integer cantidad) {
-        log.info("Actualizando stock artículo id: {} sucursal id: {}", idArt, idSucursal);
-        StockSucursal stock = repository.findByArticulo_IdArtAndIdSucursal(idArt, idSucursal)
+
+    public StockSucursalResponse actualizarCantidad(String nombreArt, String nombreSucursal, Integer cantidad) {
+        log.info("Actualizando stock artículo: {} sucursal: {}", nombreArt, nombreSucursal);
+        StockSucursal stock = repository.findByNombreArtAndNombreSucursal(nombreArt, nombreSucursal)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Stock no encontrado"));
         stock.setCantidadDisponible(cantidad);
         return toResponse(repository.save(stock));
     }
 
-    
-    public StockSucursalResponse descontarStock(Long idArt, Long idSucursal, Integer cantidadVendida) {
-        log.info("Descontando {} unidades del artículo id: {} en sucursal id: {}", cantidadVendida, idArt, idSucursal);
-        StockSucursal stock = repository.findByArticulo_IdArtAndIdSucursal(idArt, idSucursal)
+
+    public StockSucursalResponse descontarStock(String nombreArt, String nombreSucursal, Integer cantidadVendida) {
+        log.info("Descontando {} unidades del artículo: {} en sucursal: {}", cantidadVendida, nombreArt, nombreSucursal);
+        StockSucursal stock = repository.findByNombreArtAndNombreSucursal(nombreArt, nombreSucursal)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Stock no encontrado para este artículo y sucursal"));
 
         if (stock.getCantidadDisponible() < cantidadVendida) {
@@ -74,10 +74,10 @@ public class StockSucursalService{
         return toResponse(repository.save(stock));
     }
 
-    
-    public Boolean verificarStock(Long idArt, Long idSucursal, Integer cantidadRequerida) {
-        log.info("Verificando stock artículo id: {} sucursal id: {}", idArt, idSucursal);
-        return repository.findByArticulo_IdArtAndIdSucursal(idArt, idSucursal)
+
+    public Boolean verificarStock(String nombreArt, String nombreSucursal, Integer cantidadRequerida) {
+        log.info("Verificando stock artículo: {} sucursal: {}", nombreArt, nombreSucursal);
+        return repository.findByNombreArtAndNombreSucursal(nombreArt, nombreSucursal)
                 .map(s -> s.getCantidadDisponible() >= cantidadRequerida)
                 .orElse(false);
     }
@@ -85,9 +85,8 @@ public class StockSucursalService{
     private StockSucursalResponse toResponse(StockSucursal s) {
         StockSucursalResponse r = new StockSucursalResponse();
         r.setIdStock(s.getIdStock());
-        r.setIdArt(s.getArticulo().getIdArt());
-        r.setNombreArticulo(s.getArticulo().getNombre());
-        r.setIdSucursal(s.getIdSucursal());
+        r.setNombreArt(s.getNombreArt());
+        r.setNombreSucursal(s.getNombreSucursal());
         r.setCantidadDisponible(s.getCantidadDisponible());
         return r;
     }

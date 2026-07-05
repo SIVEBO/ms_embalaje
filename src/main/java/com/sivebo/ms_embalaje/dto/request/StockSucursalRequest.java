@@ -1,6 +1,7 @@
 package com.sivebo.ms_embalaje.dto.request;
 
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,11 +12,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class StockSucursalRequest {
 
-    @NotNull(message = "El artículo es obligatorio")
-    private Long idArt;
+    @NotBlank(message = "El artículo es obligatorio")
+    private String nombreArt;
 
-    @NotNull(message = "La sucursal es obligatoria")
-    private Long idSucursal;
+    @NotBlank(message = "La sucursal es obligatoria")
+    private String nombreSucursal;
 
     @NotNull(message = "La cantidad es obligatoria")
     @Min(value = 0, message = "La cantidad no puede ser negativa")

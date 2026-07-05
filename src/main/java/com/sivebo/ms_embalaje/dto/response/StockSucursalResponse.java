@@ -11,9 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class StockSucursalResponse {
     private Long idStock;
-    private Long idArt;
-    private String nombreArticulo;
-    private Long idSucursal;
+    private String nombreArt;
+    private String nombreSucursal;
     private Integer cantidadDisponible;
     private LocalDateTime updatedAt;
 }

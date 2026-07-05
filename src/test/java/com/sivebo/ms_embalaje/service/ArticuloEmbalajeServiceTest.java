@@ -47,12 +47,12 @@ class ArticuloEmbalajeServiceTest {
     @BeforeEach
     void setUp() {
         categoria = new CategoriaEmbalaje(1L, "Cajas");
-        articulo = new ArticuloEmbalaje(1L, categoria, "Caja Grande", "Descripción", new BigDecimal("9990"), true);
+        articulo = new ArticuloEmbalaje(1L, "Cajas", "Caja Grande", "Descripción", new BigDecimal("9990"), true);
     }
 
-    private ArticuloEmbalajeRequest buildRequest(Long idCat, String nombre, BigDecimal precio) {
+    private ArticuloEmbalajeRequest buildRequest(String nombreCategoria, String nombre, BigDecimal precio) {
         ArticuloEmbalajeRequest req = new ArticuloEmbalajeRequest();
-        req.setIdCat(idCat);
+        req.setNombreCategoria(nombreCategoria);
         req.setNombre(nombre);
         req.setPrecioVta(precio);
         return req;
@@ -60,10 +60,10 @@ class ArticuloEmbalajeServiceTest {
 
     @Test
     void crear_categoriaExiste_retornaDTO() {
-        when(categoriaRepository.findById(1L)).thenReturn(Optional.of(categoria));
+        when(categoriaRepository.findByNombreCategoria("Cajas")).thenReturn(Optional.of(categoria));
         when(repository.save(any(ArticuloEmbalaje.class))).thenReturn(articulo);
 
-        ArticuloEmbalajeResponse result = service.crear(buildRequest(1L, "Caja Grande", new BigDecimal("9990")));
+        ArticuloEmbalajeResponse result = service.crear(buildRequest("Cajas", "Caja Grande", new BigDecimal("9990")));
 
         assertNotNull(result);
         assertEquals("Caja Grande", result.getNombre());
@@ -73,10 +73,10 @@ class ArticuloEmbalajeServiceTest {
 
     @Test
     void crear_categoriaNoExiste_lanzaExcepcion() {
-        when(categoriaRepository.findById(99L)).thenReturn(Optional.empty());
+        when(categoriaRepository.findByNombreCategoria("Inexistente")).thenReturn(Optional.empty());
 
         assertThrows(RecursoNoEncontradoException.class,
-                () -> service.crear(buildRequest(99L, "Caja", new BigDecimal("100"))));
+                () -> service.crear(buildRequest("Inexistente", "Caja", new BigDecimal("100"))));
         verify(repository, never()).save(any());
     }
 
@@ -88,7 +88,7 @@ class ArticuloEmbalajeServiceTest {
 
         assertNotNull(result);
         assertEquals(1L, result.getIdArt());
-        assertEquals(1L, result.getIdCat());
+        assertEquals("Cajas", result.getNombreCategoria());
     }
 
     @Test
@@ -110,25 +110,25 @@ class ArticuloEmbalajeServiceTest {
 
     @Test
     void listarPorCategoria_retornaListaFiltrada() {
-        when(repository.findByCategoria_IdCat(1L)).thenReturn(List.of(articulo));
+        when(repository.findByNombreCategoria("Cajas")).thenReturn(List.of(articulo));
 
-        List<ArticuloEmbalajeResponse> result = service.listarPorCategoria(1L);
+        List<ArticuloEmbalajeResponse> result = service.listarPorCategoria("Cajas");
 
         assertEquals(1, result.size());
-        assertEquals(1L, result.get(0).getIdCat());
+        assertEquals("Cajas", result.get(0).getNombreCategoria());
     }
 
     @Test
     void actualizar_encontrado_retornaActualizado() {
         ArticuloEmbalaje actualizado = new ArticuloEmbalaje(
-                1L, categoria, "Caja Actualizada", null, new BigDecimal("12000"), true);
+                1L, "Cajas", "Caja Actualizada", null, new BigDecimal("12000"), true);
 
         when(repository.findById(1L)).thenReturn(Optional.of(articulo));
-        when(categoriaRepository.findById(1L)).thenReturn(Optional.of(categoria));
+        when(categoriaRepository.findByNombreCategoria("Cajas")).thenReturn(Optional.of(categoria));
         when(repository.save(any(ArticuloEmbalaje.class))).thenReturn(actualizado);
 
         ArticuloEmbalajeResponse result = service.actualizar(1L,
-                buildRequest(1L, "Caja Actualizada", new BigDecimal("12000")));
+                buildRequest("Cajas", "Caja Actualizada", new BigDecimal("12000")));
 
         assertEquals("Caja Actualizada", result.getNombre());
         verify(repository).save(any(ArticuloEmbalaje.class));
@@ -139,13 +139,13 @@ class ArticuloEmbalajeServiceTest {
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
         assertThrows(RecursoNoEncontradoException.class,
-                () -> service.actualizar(99L, buildRequest(1L, "Caja", new BigDecimal("100"))));
+                () -> service.actualizar(99L, buildRequest("Cajas", "Caja", new BigDecimal("100"))));
     }
 
     @Test
     void desactivar_encontrado_poneActivoFalse() {
         ArticuloEmbalaje inactivo = new ArticuloEmbalaje(
-                1L, categoria, "Caja Grande", "Descripción", new BigDecimal("9990"), false);
+                1L, "Cajas", "Caja Grande", "Descripción", new BigDecimal("9990"), false);
 
         when(repository.findById(1L)).thenReturn(Optional.of(articulo));
         when(repository.save(any(ArticuloEmbalaje.class))).thenReturn(inactivo);

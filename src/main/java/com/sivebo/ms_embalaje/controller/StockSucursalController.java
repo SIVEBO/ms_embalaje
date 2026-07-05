@@ -54,9 +54,9 @@ public class StockSucursalController {
 
     @Operation(summary = "Listar stock de una sucursal", description = "muestra disponibilidad de embalaje por sucursal")
     @ApiResponse(responseCode = "200", description = "Lista de stock por sucursal")
-    @GetMapping("/sucursal/{idSucursal}")
-    public ResponseEntity<List<StockSucursalResponse>> listarPorSucursal(@PathVariable Long idSucursal) {
-        return ResponseEntity.ok(service.listarPorSucursal(idSucursal));
+    @GetMapping("/sucursal/{nombreSucursal}")
+    public ResponseEntity<List<StockSucursalResponse>> listarPorSucursal(@PathVariable String nombreSucursal) {
+        return ResponseEntity.ok(service.listarPorSucursal(nombreSucursal));
     }
 
     @Operation(summary = "Actualizar cantidad en stock")
@@ -66,10 +66,10 @@ public class StockSucursalController {
     })
     @PatchMapping("/actualizar")
     public ResponseEntity<StockSucursalResponse> actualizarCantidad(
-            @RequestParam Long idArt,
-            @RequestParam Long idSucursal,
+            @RequestParam String nombreArt,
+            @RequestParam String nombreSucursal,
             @RequestParam Integer cantidad) {
-        return ResponseEntity.ok(service.actualizarCantidad(idArt, idSucursal, cantidad));
+        return ResponseEntity.ok(service.actualizarCantidad(nombreArt, nombreSucursal, cantidad));
     }
 
     @Operation(summary = "Descontar stock por venta", description = "descuenta unidades vendidas del stock de sucursal")
@@ -79,19 +79,19 @@ public class StockSucursalController {
     })
     @PatchMapping("/descontar")
     public ResponseEntity<StockSucursalResponse> descontarStock(
-            @RequestParam Long idArt,
-            @RequestParam Long idSucursal,
+            @RequestParam String nombreArt,
+            @RequestParam String nombreSucursal,
             @RequestParam Integer cantidad) {
-        return ResponseEntity.ok(service.descontarStock(idArt, idSucursal, cantidad));
+        return ResponseEntity.ok(service.descontarStock(nombreArt, nombreSucursal, cantidad));
     }
 
     @Operation(summary = "Verificar disponibilidad de stock", description = "verifica si hay stock suficiente antes de vender")
     @ApiResponse(responseCode = "200", description = "Booleano indicando si hay stock suficiente")
     @GetMapping("/verificar")
     public ResponseEntity<Boolean> verificarStock(
-            @RequestParam Long idArt,
-            @RequestParam Long idSucursal,
+            @RequestParam String nombreArt,
+            @RequestParam String nombreSucursal,
             @RequestParam Integer cantidadRequerida) {
-        return ResponseEntity.ok(service.verificarStock(idArt, idSucursal, cantidadRequerida));
+        return ResponseEntity.ok(service.verificarStock(nombreArt, nombreSucursal, cantidadRequerida));
     }
 }

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -106,9 +107,19 @@ class CategoriaEmbalajeServiceTest {
     }
 
     @Test
-    void eliminar_invocaDeleteById() {
+    void eliminar_existe_invocaDeleteById() {
+        when(repository.existsById(1L)).thenReturn(true);
+
         service.eliminar(1L);
 
         verify(repository).deleteById(1L);
+    }
+
+    @Test
+    void eliminar_noExiste_lanzaExcepcion() {
+        when(repository.existsById(99L)).thenReturn(false);
+
+        assertThrows(RecursoNoEncontradoException.class, () -> service.eliminar(99L));
+        verify(repository, never()).deleteById(any());
     }
 }

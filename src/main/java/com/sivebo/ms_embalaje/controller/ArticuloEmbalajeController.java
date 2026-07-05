@@ -61,9 +61,9 @@ public class ArticuloEmbalajeController {
 
     @Operation(summary = "Listar artículos por categoría")
     @ApiResponse(responseCode = "200", description = "Lista filtrada por categoría")
-    @GetMapping("/categoria/{idCat}")
-    public ResponseEntity<List<ArticuloEmbalajeResponse>> listarPorCategoria(@PathVariable Long idCat) {
-        return ResponseEntity.ok(service.listarPorCategoria(idCat));
+    @GetMapping("/categoria/{nombreCategoria}")
+    public ResponseEntity<List<ArticuloEmbalajeResponse>> listarPorCategoria(@PathVariable String nombreCategoria) {
+        return ResponseEntity.ok(service.listarPorCategoria(nombreCategoria));
     }
 
     @Operation(summary = "Actualizar artículo")

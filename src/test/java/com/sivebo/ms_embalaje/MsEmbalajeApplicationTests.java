@@ -57,7 +57,7 @@ class MsEmbalajeApplicationTests {
 
             articulo = new ArticuloEmbalaje();
             articulo.setIdArt(1L);
-            articulo.setCategoria(categoria);
+            articulo.setNombreCategoria("Cajas");
             articulo.setNombre("Caja Grande");
             articulo.setDescripcion("Caja de carton grande");
             articulo.setPrecioVta(new BigDecimal("2500"));
@@ -67,12 +67,12 @@ class MsEmbalajeApplicationTests {
         @Test
         void crear_categoriaExiste_creaConActivoTrue() {
             ArticuloEmbalajeRequest request = new ArticuloEmbalajeRequest();
-            request.setIdCat(1L);
+            request.setNombreCategoria("Cajas");
             request.setNombre("Caja Grande");
             request.setDescripcion("Caja de carton grande");
             request.setPrecioVta(new BigDecimal("2500"));
 
-            when(categoriaRepository.findById(1L)).thenReturn(Optional.of(categoria));
+            when(categoriaRepository.findByNombreCategoria("Cajas")).thenReturn(Optional.of(categoria));
             when(repository.save(any(ArticuloEmbalaje.class))).thenReturn(articulo);
 
             ArticuloEmbalajeResponse response = service.crear(request);
@@ -85,11 +85,11 @@ class MsEmbalajeApplicationTests {
         @Test
         void crear_categoriaNoExiste_lanzaExcepcion() {
             ArticuloEmbalajeRequest request = new ArticuloEmbalajeRequest();
-            request.setIdCat(99L);
+            request.setNombreCategoria("Inexistente");
             request.setNombre("Test");
             request.setPrecioVta(new BigDecimal("100"));
 
-            when(categoriaRepository.findById(99L)).thenReturn(Optional.empty());
+            when(categoriaRepository.findByNombreCategoria("Inexistente")).thenReturn(Optional.empty());
 
             assertThrows(RecursoNoEncontradoException.class, () -> service.crear(request));
         }
@@ -100,7 +100,7 @@ class MsEmbalajeApplicationTests {
 
             ArticuloEmbalaje desactivado = new ArticuloEmbalaje();
             desactivado.setIdArt(1L);
-            desactivado.setCategoria(categoria);
+            desactivado.setNombreCategoria("Cajas");
             desactivado.setNombre("Caja Grande");
             desactivado.setPrecioVta(new BigDecimal("2500"));
             desactivado.setActivo(false);
@@ -142,76 +142,72 @@ class MsEmbalajeApplicationTests {
 
         @BeforeEach
         void setUp() {
-            CategoriaEmbalaje cat = new CategoriaEmbalaje();
-            cat.setIdCat(1L);
-            cat.setNombreCategoria("Cajas");
-
             articulo = new ArticuloEmbalaje();
             articulo.setIdArt(1L);
-            articulo.setCategoria(cat);
+            articulo.setNombreCategoria("Cajas");
             articulo.setNombre("Caja Grande");
             articulo.setPrecioVta(new BigDecimal("2500"));
             articulo.setActivo(true);
 
             stock = new StockSucursal();
             stock.setIdStock(1L);
-            stock.setArticulo(articulo);
-            stock.setIdSucursal(5L);
+            stock.setNombreArt("Caja Grande");
+            stock.setNombreSucursal("Sucursal Centro");
             stock.setCantidadDisponible(20);
         }
 
         @Test
         void descontarStock_stockSuficiente_descuentaCorrectamente() {
-            when(repository.findByArticulo_IdArtAndIdSucursal(1L, 5L)).thenReturn(Optional.of(stock));
+            when(repository.findByNombreArtAndNombreSucursal("Caja Grande", "Sucursal Centro")).thenReturn(Optional.of(stock));
 
             StockSucursal actualizado = new StockSucursal();
             actualizado.setIdStock(1L);
-            actualizado.setArticulo(articulo);
-            actualizado.setIdSucursal(5L);
+            actualizado.setNombreArt("Caja Grande");
+            actualizado.setNombreSucursal("Sucursal Centro");
             actualizado.setCantidadDisponible(15);
 
             when(repository.save(any(StockSucursal.class))).thenReturn(actualizado);
 
-            StockSucursalResponse response = service.descontarStock(1L, 5L, 5);
+            StockSucursalResponse response = service.descontarStock("Caja Grande", "Sucursal Centro", 5);
 
             assertEquals(15, response.getCantidadDisponible());
         }
 
         @Test
         void descontarStock_stockInsuficiente_lanzaExcepcion() {
-            when(repository.findByArticulo_IdArtAndIdSucursal(1L, 5L)).thenReturn(Optional.of(stock));
+            when(repository.findByNombreArtAndNombreSucursal("Caja Grande", "Sucursal Centro")).thenReturn(Optional.of(stock));
 
             assertThrows(ReglaNegocioException.class,
-                    () -> service.descontarStock(1L, 5L, 50));
+                    () -> service.descontarStock("Caja Grande", "Sucursal Centro", 50));
         }
 
         @Test
         void descontarStock_stockNoExiste_lanzaExcepcion() {
-            when(repository.findByArticulo_IdArtAndIdSucursal(99L, 5L)).thenReturn(Optional.empty());
+            when(repository.findByNombreArtAndNombreSucursal("Inexistente", "Sucursal Centro")).thenReturn(Optional.empty());
 
             assertThrows(RecursoNoEncontradoException.class,
-                    () -> service.descontarStock(99L, 5L, 1));
+                    () -> service.descontarStock("Inexistente", "Sucursal Centro", 1));
         }
 
         @Test
         void verificarStock_suficiente_retornaTrue() {
-            when(repository.findByArticulo_IdArtAndIdSucursal(1L, 5L)).thenReturn(Optional.of(stock));
+            when(repository.findByNombreArtAndNombreSucursal("Caja Grande", "Sucursal Centro")).thenReturn(Optional.of(stock));
 
-            assertTrue(service.verificarStock(1L, 5L, 10));
+            assertTrue(service.verificarStock("Caja Grande", "Sucursal Centro", 10));
         }
 
         @Test
         void verificarStock_insuficiente_retornaFalse() {
-            when(repository.findByArticulo_IdArtAndIdSucursal(1L, 5L)).thenReturn(Optional.of(stock));
+            when(repository.findByNombreArtAndNombreSucursal("Caja Grande", "Sucursal Centro")).thenReturn(Optional.of(stock));
 
-            assertFalse(service.verificarStock(1L, 5L, 50));
+            assertFalse(service.verificarStock("Caja Grande", "Sucursal Centro", 50));
         }
 
         @Test
         void verificarStock_noExiste_retornaFalse() {
-            when(repository.findByArticulo_IdArtAndIdSucursal(99L, 5L)).thenReturn(Optional.empty());
+            when(repository.findByNombreArtAndNombreSucursal("Inexistente", "Sucursal Centro")).thenReturn(Optional.empty());
 
-            assertFalse(service.verificarStock(99L, 5L, 1));
+            assertFalse(service.verificarStock("Inexistente", "Sucursal Centro", 1));
         }
     }
 }

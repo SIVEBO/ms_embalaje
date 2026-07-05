@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ArticuloEmbalajeResponse {
     private Long idArt;
-    private Long idCat;
     private String nombreCategoria;
     private String nombre;
     private String descripcion;

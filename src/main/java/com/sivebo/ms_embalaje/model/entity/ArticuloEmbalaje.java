@@ -7,8 +7,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,11 +26,10 @@ public class ArticuloEmbalaje {
     @Column(name = "id_art")
     private Long idArt;
 
-    @ManyToOne
-    @JoinColumn(name = "id_cat", nullable = false)
-    private CategoriaEmbalaje categoria;
+    @Column(name = "nombre_categoria", nullable = false, length = 100)
+    private String nombreCategoria;
 
-    @Column(name = "nombre", nullable = false, length = 100)
+    @Column(name = "nombre", nullable = false, length = 100, unique = true)
     private String nombre;
 
     @Column(name = "descripcion", length = 255)

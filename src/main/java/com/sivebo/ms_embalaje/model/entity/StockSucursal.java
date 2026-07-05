@@ -7,8 +7,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -24,7 +22,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "stock_sucursal", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"id_art", "id_sucursal"})
+    @UniqueConstraint(columnNames = {"nombre_art", "nombre_sucursal"})
 })
 public class StockSucursal {
 
@@ -33,12 +31,11 @@ public class StockSucursal {
     @Column(name = "id_stock")
     private Long idStock;
 
-    @ManyToOne
-    @JoinColumn(name = "id_art", nullable = false)
-    private ArticuloEmbalaje articulo;
+    @Column(name = "nombre_art", nullable = false)
+    private String nombreArt;
 
-    @Column(name = "id_sucursal", nullable = false)
-    private Long idSucursal;
+    @Column(name = "nombre_sucursal", nullable = false)
+    private String nombreSucursal;
 
     @Column(name = "cantidad_disponible", nullable = false)
     private Integer cantidadDisponible;
